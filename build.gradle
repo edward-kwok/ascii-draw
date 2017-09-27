@@ -1,0 +1,40 @@
+group 'com.ubs.takehome'
+version = '1.0'
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+mainClassName = "com.ubs.takehome.App"
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version: '23.0'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    //More familiar with TestNG
+    testCompile group: 'org.testng', name: 'testng', version: '6.11'
+    //For testing against System.in out and exit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.16.0'
+}
+run {
+    standardInput = System.in
+}
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Take home ASCII test',
+                'Implementation-Version': version,
+                'Main-Class': 'com.ubs.takehome.App'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
+test.useTestNG()
+test.useJUnit()
